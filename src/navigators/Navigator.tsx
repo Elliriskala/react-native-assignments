@@ -5,7 +5,8 @@ import Profile from '../views/Profile';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Single from '../views/Single';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import {useUserContext} from '../hooks/contextHooks';
+import Login from '../views/Login';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -13,24 +14,21 @@ const Stack = createNativeStackNavigator();
 const TabScreen = () => {
   return (
     <Tab.Navigator
-    screenOptions={({ route }) => ({
-      tabBarIcon: ({ focused, color, size }) => {
-        let iconName= "";
+      screenOptions={({route}) => ({
+        tabBarIcon: ({focused, color, size}) => {
+          let iconName = '';
 
-        if (route.name === 'All Media') {
-          iconName = focused
-            ? 'home-outline'
-            : 'home-outline';
-        } else if (route.name === 'My Profile') {
-          iconName = focused ? 'person-outline' : 'person-outline';
-        }
-        return <Ionicons name={iconName} size={size} color={color} />;
-      },
-      tabBarActiveTintColor: 'green',
-      tabBarInactiveTintColor: 'gray',
-    })}
+          if (route.name === 'All Media') {
+            iconName = focused ? 'home-outline' : 'home-outline';
+          } else if (route.name === 'My Profile') {
+            iconName = focused ? 'person-outline' : 'person-outline';
+          }
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: 'green',
+        tabBarInactiveTintColor: 'gray',
+      })}
     >
-
       <Tab.Screen
         name="All Media"
         component={Home}
@@ -42,14 +40,22 @@ const TabScreen = () => {
 };
 
 const StackScreen = () => {
+  const {user} = useUserContext();
+
   return (
     <Stack.Navigator>
-      <Stack.Screen
-        name="Back"
-        component={TabScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen name="Single" component={Single} />
+      {user ? (
+        <>
+          <Stack.Screen
+            name="Back"
+            component={TabScreen}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen name="Single" component={Single} />
+        </>
+      ) : (
+        <Stack.Screen name="My Media App" component={Login} />
+      )}
     </Stack.Navigator>
   );
 };
