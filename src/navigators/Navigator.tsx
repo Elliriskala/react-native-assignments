@@ -7,6 +7,7 @@ import Single from '../views/Single';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useUserContext} from '../hooks/contextHooks';
 import Login from '../views/Login';
+import MyFiles from '../views/MyFiles';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -52,6 +53,7 @@ const StackScreen = () => {
             options={{headerShown: false}}
           />
           <Stack.Screen name="Single" component={Single} />
+          <Stack.Screen name="MyFiles" component={MyFiles} />
         </>
       ) : (
         <Stack.Screen name="My Media App" component={Login} />

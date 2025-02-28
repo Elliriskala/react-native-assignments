@@ -16,14 +16,15 @@ import {
   UserResponse,
 } from 'hybrid-types/MessageTypes';
 
-const useMedia = () => {
+const useMedia = (id?: number) => {
   const [mediaArray, setMediaArray] = useState<MediaItemWithOwner[]>([]);
+  const url = id ? '/media/byuser/' + id : '/media';
 
   useEffect(() => {
     const getMedia = async () => {
       try {
         const media = await fetchData<MediaItem[]>(
-          process.env.EXPO_PUBLIC_MEDIA_API + '/media',
+          process.env.EXPO_PUBLIC_MEDIA_API + url,
         );
         const mediaWithOwner: MediaItemWithOwner[] = await Promise.all(
           media.map(async (item) => {
