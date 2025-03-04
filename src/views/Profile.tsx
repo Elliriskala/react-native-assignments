@@ -22,7 +22,7 @@ const Profile = ({navigation}: {navigation: NavigationProp<ParamListBase>}) => {
           Member since: {user && new Date(user.created_at).toLocaleString('fi-FI')}
         </Text>
       </ListItem>
-      <Button onPress={() => {navigation.navigate('MyFiles')}}>My files</Button>
+      <Button onPress={() => {navigation.navigate('My Files')}}>My files</Button>
       <Button onPress={handleLogout}>Logout</Button>
     </Card>
   );

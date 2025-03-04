@@ -30,9 +30,9 @@ const Comments = ({item}: {item: MediaItemWithOwner}) => {
     try {
       const comments = await getCommentsByMediaId(item.media_id);
       setComments(comments);
-    } catch (error) {
+    } catch {
       setComments([]);
-      console.error((error as Error).message);
+      return;
     }
   };
 

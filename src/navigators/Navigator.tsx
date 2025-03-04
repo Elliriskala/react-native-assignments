@@ -8,9 +8,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useUserContext} from '../hooks/contextHooks';
 import Login from '../views/Login';
 import MyFiles from '../views/MyFiles';
+import { NavigatorType } from '../types/LocalTypes';
+import Upload from '../views/Upload';
 
-const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator<NavigatorType>();
+const Stack = createNativeStackNavigator<NavigatorType>();
 
 const TabScreen = () => {
   return (
@@ -20,10 +22,13 @@ const TabScreen = () => {
           let iconName = '';
 
           if (route.name === 'All Media') {
-            iconName = focused ? 'home-outline' : 'home-outline';
+            iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'My Profile') {
-            iconName = focused ? 'person-outline' : 'person-outline';
+            iconName = focused ? 'person' : 'person-outline';
+          } else if (route.name === 'Upload') {
+            iconName = focused ? 'cloud-upload' : 'cloud-upload-outline';
           }
+
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: 'green',
@@ -36,6 +41,7 @@ const TabScreen = () => {
         //options={{headerShown: false}}
       />
       <Tab.Screen name="My Profile" component={Profile} />
+      <Tab.Screen name="Upload" component={Upload} />
     </Tab.Navigator>
   );
 };
@@ -53,7 +59,7 @@ const StackScreen = () => {
             options={{headerShown: false}}
           />
           <Stack.Screen name="Single" component={Single} />
-          <Stack.Screen name="MyFiles" component={MyFiles} />
+          <Stack.Screen name="My Files" component={MyFiles} />
         </>
       ) : (
         <Stack.Screen name="My Media App" component={Login} />
