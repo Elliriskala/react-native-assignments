@@ -16,14 +16,18 @@ import {
   UserResponse,
 } from 'hybrid-types/MessageTypes';
 import * as FileSystem from 'expo-file-system';
+import {useUpdateContext} from './contextHooks';
 
 const useMedia = (id?: number) => {
   const [mediaArray, setMediaArray] = useState<MediaItemWithOwner[]>([]);
+  const [loading, setLoading] = useState(false);
+  const {update} = useUpdateContext();
   const url = id ? '/media/byuser/' + id : '/media';
 
   useEffect(() => {
     const getMedia = async () => {
       try {
+        setLoading(true);
         const media = await fetchData<MediaItem[]>(
           process.env.EXPO_PUBLIC_MEDIA_API + url,
         );
@@ -48,11 +52,13 @@ const useMedia = (id?: number) => {
         setMediaArray(mediaWithOwner);
       } catch (error) {
         console.error((error as Error).message);
+      } finally {
+        setLoading(false);
       }
     };
 
     getMedia();
-  }, []);
+  }, [update]);
 
   const postMedia = async (
     file: UploadResponse,
@@ -85,7 +91,20 @@ const useMedia = (id?: number) => {
     );
   };
 
-  return {mediaArray, postMedia};
+  const deleteMedia = async (media_id: number, token: string) => {
+    const options = {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+    };
+    return await fetchData<MessageResponse>(
+      process.env.EXPO_PUBLIC_MEDIA_API + '/media/' + media_id,
+      options,
+    );
+  }
+
+  return {mediaArray, postMedia, deleteMedia, loading};
 };
 
 const useFile = () => {

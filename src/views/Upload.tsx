@@ -10,6 +10,7 @@ import {useFile, useMedia} from '../hooks/apiHooks';
 import {useNavigation} from '@react-navigation/native';
 import {NavigatorType} from '../types/LocalTypes';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useUpdateContext} from '../hooks/contextHooks';
 
 type UploadInputs = {
   title: string;
@@ -20,6 +21,7 @@ const Upload = () => {
   const {postExpoFile, loading} = useFile();
   const {postMedia} = useMedia();
   const navigation = useNavigation<NativeStackNavigationProp<NavigatorType>>();
+  const {triggerUpdate} = useUpdateContext();
   const [image, setImage] = useState<ImagePicker.ImagePickerResult | null>(
     null,
   );
@@ -62,9 +64,10 @@ const Upload = () => {
       return;
     }
 
-    Alert.alert('Upload successful', mediaResponse.message);
     reset(initValues);
 
+    triggerUpdate();
+    Alert.alert('Upload successful', mediaResponse.message);
     navigation.navigate('All Media');
   };
 
@@ -89,7 +92,7 @@ const Upload = () => {
     });
     return () => {
       unsubscribe();
-    }
+    };
   }, []);
 
   return (
@@ -145,7 +148,12 @@ const Upload = () => {
           onPress={pickImage}
         />
       )}
-      <Button title="Upload" onPress={handleSubmit(doUpload)} loading={loading} disabled={!isValid || image === null}/>
+      <Button
+        title="Upload"
+        onPress={handleSubmit(doUpload)}
+        loading={loading}
+        disabled={!isValid || image === null || loading}
+      />
       <Button title="Reset" color="warning" onPress={resetForm} />
     </Card>
   );

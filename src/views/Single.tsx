@@ -1,12 +1,35 @@
 import {MediaItemWithOwner} from 'hybrid-types/DBTypes';
-import {Image, ScrollView, StyleSheet, Text} from 'react-native';
+import {Alert, Image, ScrollView, StyleSheet, Text} from 'react-native';
 import {Video} from 'expo-av';
-import {Card, Icon, ListItem} from '@rneui/base';
+import {Button, Card, Icon, ListItem} from '@rneui/base';
 import Likes from '../components/Likes';
 import Comments from '../components/Comments';
+import {useMedia} from '../hooks/apiHooks';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useUpdateContext, useUserContext} from '../hooks/contextHooks';
+import {useNavigation} from '@react-navigation/native';
 
 const Single = ({route}: any) => {
   const item: MediaItemWithOwner = route.params.item;
+  const {user} = useUserContext();
+  const {triggerUpdate} = useUpdateContext();
+  const {deleteMedia} = useMedia();
+  const navigation = useNavigation();
+
+  const handleDelete = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+
+      if (!token) {
+        return;
+      }
+
+      const deleteResponse = await deleteMedia(item.media_id, token);
+      triggerUpdate();
+      Alert.alert('Success', deleteResponse.message);
+      navigation.goBack();
+    } catch {}
+  };
 
   return (
     <ScrollView>
@@ -42,6 +65,11 @@ const Single = ({route}: any) => {
         </ListItem>
         <Likes item={item} />
         <Comments item={item} />
+        {user?.user_id === item.user_id && (
+          <ListItem>
+            <Button title="Delete" color="error" onPress={handleDelete} />
+          </ListItem>
+        )}
       </Card>
     </ScrollView>
   );
